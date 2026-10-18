@@ -5,59 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCORPGUARD | Agent Runtime Guardian</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0A0A0A; color: #ffffff; font-family: 'Inter', sans-serif; }
-        .glow-amber { box-shadow: 0 0 20px rgba(255, 159, 28, 0.4); }
-        .glow-red { box-shadow: 0 0 20px rgba(230, 57, 70, 0.6); }
-        .glow-cyan { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+        body { 
+            background-color: #050505; 
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #050505 70%);
+            color: #ffffff; 
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Neon Glows */
+        .glow-amber { text-shadow: 0 0 10px rgba(255, 159, 28, 0.6); }
+        .glow-cyan { text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); }
+        .glow-red { box-shadow: 0 0 20px rgba(230, 57, 70, 0.4); border: 1px solid rgba(230, 57, 70, 0.5); }
+        .glow-purple { box-shadow: 0 0 20px rgba(147, 51, 234, 0.4); border: 1px solid rgba(147, 51, 234, 0.5); }
+        
+        /* Terminal Blinking Cursor */
+        .cursor::after {
+            content: '▋';
+            animation: blink 1s step-end infinite;
+            color: #00E5FF;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
-<body class="min-h-screen p-8">
+<body class="p-6 md:p-10">
 
     <!-- Header -->
-    <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
+    <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-5">
         <div class="flex items-center gap-4">
-            <span class="text-4xl">🦂</span>
-            <h1 class="text-3xl font-bold text-amber-500 tracking-wider glow-amber px-4 py-1 rounded">SCORPGUARD</h1>
-            <span class="text-gray-400 text-sm">The Agent Runtime Guardian</span>
+            <div class="bg-gray-900 p-2 rounded-lg border border-gray-700 shadow-lg">
+                <span class="text-4xl">🦂</span>
+            </div>
+            <div>
+                <h1 class="text-4xl font-extrabold text-amber-500 tracking-tight glow-amber">SCORPGUARD</h1>
+                <p class="text-gray-400 text-sm font-medium tracking-widest uppercase mt-1">Agent Runtime Guardian</p>
+            </div>
         </div>
-        <div class="text-right">
-            <p class="text-sm text-gray-400">Team Scorpion | AMD ACT III</p>
+        <div class="text-right hidden md:block">
+            <p class="text-sm text-gray-300 font-semibold">Team Scorpion</p>
+            <p class="text-xs text-cyan-400 font-mono mt-1">AMD ACT III</p>
         </div>
     </header>
 
     <!-- Main Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Left Panel: Controls -->
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-cyan-400 mb-4">Agent Controls</h2>
-            <button onclick="runSafeAgent()" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 px-4 rounded mb-4 transition duration-300 glow-amber">
-                ▶ Run Safe Agent
+        <!-- Left Panel: Controls (Takes 4 columns) -->
+        <div class="glass-panel rounded-2xl p-6 lg:col-span-4 flex flex-col gap-4">
+            <h2 class="text-xl font-bold text-gray-100 border-b border-gray-800 pb-3 mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Agent Controls
+            </h2>
+            
+            <button onclick="runSafeAgent()" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-400 hover:to-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-emerald-900/50 flex justify-center items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                Run Safe Agent
             </button>
-            <button onclick="runAnomalousAgent()" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition duration-300 glow-red">
-                ⚠ Trigger Anomaly (Kill Test)
+
+            <button onclick="runAnomalousAgent()" class="w-full bg-gradient-to-r from-red-600 to-rose-800 hover:from-red-500 hover:to-rose-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:-translate-y-1 glow-red flex justify-center items-center gap-2 mt-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                Trigger Rule Anomaly (Crash)
+            </button>
+
+            <button onclick="runSemanticAgent()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-800 hover:from-purple-500 hover:to-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:-translate-y-1 glow-purple flex justify-center items-center gap-2 mt-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                Trigger Semantic Anomaly (AI)
             </button>
             
-            <div class="mt-8">
-                <h3 class="text-gray-400 mb-2">Cost Monitor</h3>
-                <div class="bg-black border border-gray-700 p-4 rounded text-center">
-                    <p class="text-gray-500 text-xs uppercase">Total Tokens</p>
-                    <p class="text-2xl font-bold text-cyan-400" id="token-count">0</p>
-                    <p class="text-gray-500 text-xs uppercase mt-2">Total Cost (USD)</p>
-                    <p class="text-2xl font-bold text-amber-400" id="cost-count">$0.0000</p>
+            <!-- Cost Monitor -->
+            <div class="mt-6 bg-[#0a0a0a] rounded-xl p-5 border border-gray-800 shadow-inner">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-800 pb-2">Live Metrics</h3>
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-gray-400 text-sm">Total Tokens</span>
+                    <span class="text-2xl font-mono text-cyan-400 glow-cyan" id="token-count">0</span>
+                </div>
+                <div class="flex justify-between items-end">
+                    <span class="text-gray-400 text-sm">Cost (USD)</span>
+                    <span class="text-3xl font-mono font-bold text-amber-500 glow-amber" id="cost-count">$0.0000</span>
                 </div>
             </div>
         </div>
 
-        <!-- Right Panel: Terminal Output -->
-        <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 md:col-span-2 flex flex-col h-[500px]">
-            <h2 class="text-xl font-semibold text-cyan-400 mb-4 flex justify-between">
-                Live Runtime Log
-                <span id="status-badge" class="text-sm bg-green-900 text-green-400 px-2 py-1 rounded">IDLE</span>
-            </h2>
-            <div id="terminal" class="bg-black border border-gray-800 rounded p-4 flex-grow overflow-y-auto font-mono text-sm">
-                <p class="text-gray-500">Waiting for agent to start...</p>
+        <!-- Right Panel: Terminal (Takes 8 columns) -->
+        <div class="lg:col-span-8 flex flex-col h-[600px] glass-panel rounded-2xl overflow-hidden border border-gray-700/50">
+            <!-- Terminal Header -->
+            <div class="bg-[#121212] px-4 py-3 flex justify-between items-center border-b border-gray-800">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="text-xs text-gray-500 font-mono ml-3">scorpguard@runtime:~</span>
+                </div>
+                <span id="status-badge" class="text-xs font-bold bg-green-900/50 text-green-400 border border-green-700/50 px-3 py-1 rounded-full uppercase tracking-wider">IDLE</span>
+            </div>
+            
+            <!-- Terminal Output -->
+            <div id="terminal" class="bg-[#050505] p-5 flex-grow overflow-y-auto font-mono text-sm leading-relaxed cursor">
+                <p class="text-gray-500">// System initialized. Waiting for agent runtime simulation...</p>
             </div>
         </div>
     </div>
@@ -68,9 +123,9 @@
         const tokenCount = document.getElementById('token-count');
         const costCount = document.getElementById('cost-count');
 
-        function log(message, color = 'text-gray-300') {
+        function log(message, color = 'text-gray-300', isBold = false) {
             const p = document.createElement('p');
-            p.className = color + ' mb-1';
+            p.className = `${color} mb-1.5 ${isBold ? 'font-bold text-base mt-3' : ''}`;
             p.innerText = `> ${message}`;
             terminal.appendChild(p);
             terminal.scrollTop = terminal.scrollHeight;
@@ -78,7 +133,7 @@
 
         function setStatus(text, colorClass, glowClass) {
             statusBadge.innerText = text;
-            statusBadge.className = `text-sm px-2 py-1 rounded ${colorClass} ${glowClass}`;
+            statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border ${colorClass} ${glowClass}`;
         }
 
         async function updateCost() {
@@ -87,101 +142,112 @@
                 const data = await response.json();
                 costCount.innerText = `$${data.total_cost_usd.toFixed(4)}`;
                 tokenCount.innerText = data.total_tokens;
-            } catch (e) {
-                console.error("Cost fetch failed");
-            }
+            } catch (e) { console.error("Cost fetch failed"); }
+        }
+
+        // Clear terminal and set initial state
+        function resetTerminal() {
+            terminal.innerHTML = '';
+            setStatus('RUNNING', 'bg-cyan-900/50 text-cyan-400 border-cyan-700/50', 'glow-cyan');
         }
 
         async function runSafeAgent() {
-            terminal.innerHTML = '';
-            setStatus('RUNNING', 'bg-cyan-900 text-cyan-400', 'glow-cyan');
-            log('Starting agent runtime...', 'text-cyan-400');
-            
-            // Step 1
-            log('Executing Step 1: Fetching data...');
+            resetTerminal();
+            log('Executing Standard Agent Workflow...', 'text-cyan-400');
+            log('Step 1: Fetching user data from API...', 'text-gray-400');
             await fetch('/api/v1/events', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    agent_id: "test-agent-1", step_number: 1, event_type: "llm_call",
-                    payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: "test-agent-1", step_number: 1, event_type: "llm_call", payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001})
             });
             
-            // Checkpoint
-            log('Saving safe checkpoint...', 'text-amber-400');
+            log('Saving safe checkpoint to PostgreSQL...', 'text-amber-400');
             await fetch('/api/v1/checkpoints', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}})
             });
 
-            // Step 2
-            log('Executing Step 2: Processing...');
+            log('Step 2: Processing data...', 'text-gray-400');
             await fetch('/api/v1/events', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    agent_id: "test-agent-1", step_number: 2, event_type: "llm_call",
-                    payload: {prompt: "Process", response: "Processed"}, tokens_used: 50, cost_usd: 0.0005
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: "test-agent-1", step_number: 2, event_type: "llm_call", payload: {prompt: "Process", response: "Processed"}, tokens_used: 50, cost_usd: 0.0005})
             });
 
-            log('Agent completed successfully.', 'text-green-400');
-            setStatus('COMPLETED', 'bg-green-900 text-green-400', '');
+            log('✅ Agent completed successfully. No anomalies detected.', 'text-emerald-400', true);
+            setStatus('COMPLETED', 'bg-emerald-900/50 text-emerald-400 border-emerald-700/50', '');
             updateCost();
         }
 
         async function runAnomalousAgent() {
-            terminal.innerHTML = '';
-            setStatus('RUNNING', 'bg-cyan-900 text-cyan-400', 'glow-cyan');
-            log('Starting agent runtime (Vulnerable state)...', 'text-cyan-400');
-            
-            // Step 1
-            log('Executing Step 1: Fetching data...');
+            resetTerminal();
+            log('Executing Vulnerable Agent Workflow...', 'text-cyan-400');
+            log('Step 1: Fetching data...', 'text-gray-400');
             await fetch('/api/v1/events', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    agent_id: "test-agent-1", step_number: 1, event_type: "llm_call",
-                    payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: "test-agent-1", step_number: 1, event_type: "llm_call", payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001})
             });
 
-            // Checkpoint
             log('Saving safe checkpoint...', 'text-amber-400');
             await fetch('/api/v1/checkpoints', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}
-                })
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}})
             });
 
-                      // Step 2 - Anomaly
-            log('Executing Step 2: Processing (Simulating hallucination)...', 'text-gray-400');
+            log('Step 2: Processing (Simulating Code Failure)...', 'text-gray-400');
             setTimeout(async () => {
                 log('Agent encountered a fatal error. Context corrupted.', 'text-red-400');
-                log('Injecting error: Division by zero', 'text-red-500');
+                log('Injecting error payload: Division by zero', 'text-rose-500');
+                
                 const res = await fetch('/api/v1/events', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        agent_id: "test-agent-1", step_number: 2, event_type: "llm_call",
-                        payload: {prompt: "Calculate", response: "Crash", error: "Division by zero"}, tokens_used: 50, cost_usd: 0.0005
-                    })
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({agent_id: "test-agent-1", step_number: 2, event_type: "llm_call", payload: {prompt: "Calculate", response: "Crash", error: "Division by zero"}, tokens_used: 50, cost_usd: 0.0005})
                 });
                 
                 const data = await res.json();
                 if(data.anomaly_detected) {
-                    setStatus('RECOVERING', 'bg-red-900 text-red-400', 'glow-red');
-                    log('🚨 ANOMALY DETECTED!', 'text-red-500 font-bold text-lg');
+                    setStatus('RECOVERING', 'bg-red-900/50 text-red-400 border-red-700/50', 'glow-red');
+                    log('🚨 [LAYER 1] ANOMALY DETECTED!', 'text-red-500', true);
+                    log('🔄 Triggering Auto-Rollback Engine...', 'text-amber-400');
+                    setTimeout(() => {
+                        log('✅ State restored to Checkpoint Step 1. Agent survived.', 'text-emerald-400', true);
+                        setStatus('HEALED', 'bg-emerald-900/50 text-emerald-400 border-emerald-700/50', '');
+                        updateCost();
+                    }, 1500);
+                }
+            }, 1000);
+        }
+
+        async function runSemanticAgent() {
+            resetTerminal();
+            const agentId = "demo-semantic-" + Date.now();
+            log('Executing Semantic Agent Workflow...', 'text-cyan-400');
+            
+            log('Step 1: Checking balance ($500)...', 'text-gray-400');
+            await fetch('/api/v1/checkpoints', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: agentId, step_number: 1, state_snapshot: {"balance": "$500"}})
+            });
+            await fetch('/api/v1/events', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({agent_id: agentId, step_number: 1, event_type: "llm_call", payload: {prompt: "Check balance", response: "User has $500"}, tokens_used: 100, cost_usd: 0.001})
+            });
+            log('Checkpoint saved.', 'text-amber-400');
+
+            log('Step 2: Processing transaction...', 'text-gray-400');
+            setTimeout(async () => {
+                log('Injecting Semantic Hallucination: Agent claims balance is $5000.', 'text-purple-400');
+                const res = await fetch('/api/v1/events', {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({agent_id: agentId, step_number: 2, event_type: "llm_call", payload: {prompt: "Calculate balance", response: "User has $5000 now"}, tokens_used: 100, cost_usd: 0.001})
+                });
+                
+                const data = await res.json();
+                if(data.anomaly_detected) {
+                    setStatus('RECOVERING', 'bg-red-900/50 text-red-400 border-red-700/50', 'glow-red');
+                    log('🚨 [LAYER 2] SEMANTIC ANOMALY DETECTED BY AI!', 'text-red-500', true);
                     log('🔄 Rolling back to last safe checkpoint...', 'text-amber-400');
                     setTimeout(() => {
-                        log('✅ State restored. Agent survived.', 'text-green-400');
-                        setStatus('HEALED', 'bg-green-900 text-green-400', '');
+                        log('✅ State restored. Agent survived.', 'text-emerald-400', true);
+                        setStatus('HEALED', 'bg-emerald-900/50 text-emerald-400 border-emerald-700/50', '');
                         updateCost();
                     }, 1500);
                 }

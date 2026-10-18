@@ -10,3 +10,4 @@ httpx
 openai
 python-dotenv
 pydantic-settings
+# SCORPGUARD Deploy Fix
