@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORPGUARD | Agent Runtime Guardian</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0A0A0A; color: #ffffff; font-family: 'Inter', sans-serif; }
+        .glow-amber { box-shadow: 0 0 20px rgba(255, 159, 28, 0.4); }
+        .glow-red { box-shadow: 0 0 20px rgba(230, 57, 70, 0.6); }
+        .glow-cyan { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 border-b border-gray-800 pb-4">
+        <div class="flex items-center gap-4">
+            <span class="text-4xl">🦂</span>
+            <h1 class="text-3xl font-bold text-amber-500 tracking-wider glow-amber px-4 py-1 rounded">SCORPGUARD</h1>
+            <span class="text-gray-400 text-sm">The Agent Runtime Guardian</span>
+        </div>
+        <div class="text-right">
+            <p class="text-sm text-gray-400">Team Scorpion | AMD ACT III</p>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Left Panel: Controls -->
+        <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+            <h2 class="text-xl font-semibold text-cyan-400 mb-4">Agent Controls</h2>
+            <button onclick="runSafeAgent()" class="w-full bg-amber-600 hover:bg-amber-500 text-black font-bold py-3 px-4 rounded mb-4 transition duration-300 glow-amber">
+                ▶ Run Safe Agent
+            </button>
+            <button onclick="runAnomalousAgent()" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition duration-300 glow-red">
+                ⚠ Trigger Anomaly (Kill Test)
+            </button>
+            
+            <div class="mt-8">
+                <h3 class="text-gray-400 mb-2">Cost Monitor</h3>
+                <div class="bg-black border border-gray-700 p-4 rounded text-center">
+                    <p class="text-gray-500 text-xs uppercase">Total Tokens</p>
+                    <p class="text-2xl font-bold text-cyan-400" id="token-count">0</p>
+                    <p class="text-gray-500 text-xs uppercase mt-2">Total Cost (USD)</p>
+                    <p class="text-2xl font-bold text-amber-400" id="cost-count">$0.0000</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Terminal Output -->
+        <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 md:col-span-2 flex flex-col h-[500px]">
+            <h2 class="text-xl font-semibold text-cyan-400 mb-4 flex justify-between">
+                Live Runtime Log
+                <span id="status-badge" class="text-sm bg-green-900 text-green-400 px-2 py-1 rounded">IDLE</span>
+            </h2>
+            <div id="terminal" class="bg-black border border-gray-800 rounded p-4 flex-grow overflow-y-auto font-mono text-sm">
+                <p class="text-gray-500">Waiting for agent to start...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const statusBadge = document.getElementById('status-badge');
+        const tokenCount = document.getElementById('token-count');
+        const costCount = document.getElementById('cost-count');
+
+        function log(message, color = 'text-gray-300') {
+            const p = document.createElement('p');
+            p.className = color + ' mb-1';
+            p.innerText = `> ${message}`;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function setStatus(text, colorClass, glowClass) {
+            statusBadge.innerText = text;
+            statusBadge.className = `text-sm px-2 py-1 rounded ${colorClass} ${glowClass}`;
+        }
+
+        async function updateCost() {
+            try {
+                const response = await fetch('/api/v1/checkpoints/test-agent-1/cost');
+                const data = await response.json();
+                costCount.innerText = `$${data.total_cost_usd.toFixed(4)}`;
+                tokenCount.innerText = data.total_tokens;
+            } catch (e) {
+                console.error("Cost fetch failed");
+            }
+        }
+
+        async function runSafeAgent() {
+            terminal.innerHTML = '';
+            setStatus('RUNNING', 'bg-cyan-900 text-cyan-400', 'glow-cyan');
+            log('Starting agent runtime...', 'text-cyan-400');
+            
+            // Step 1
+            log('Executing Step 1: Fetching data...');
+            await fetch('/api/v1/events', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    agent_id: "test-agent-1", step_number: 1, event_type: "llm_call",
+                    payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001
+                })
+            });
+            
+            // Checkpoint
+            log('Saving safe checkpoint...', 'text-amber-400');
+            await fetch('/api/v1/checkpoints', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}
+                })
+            });
+
+            // Step 2
+            log('Executing Step 2: Processing...');
+            await fetch('/api/v1/events', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    agent_id: "test-agent-1", step_number: 2, event_type: "llm_call",
+                    payload: {prompt: "Process", response: "Processed"}, tokens_used: 50, cost_usd: 0.0005
+                })
+            });
+
+            log('Agent completed successfully.', 'text-green-400');
+            setStatus('COMPLETED', 'bg-green-900 text-green-400', '');
+            updateCost();
+        }
+
+        async function runAnomalousAgent() {
+            terminal.innerHTML = '';
+            setStatus('RUNNING', 'bg-cyan-900 text-cyan-400', 'glow-cyan');
+            log('Starting agent runtime (Vulnerable state)...', 'text-cyan-400');
+            
+            // Step 1
+            log('Executing Step 1: Fetching data...');
+            await fetch('/api/v1/events', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    agent_id: "test-agent-1", step_number: 1, event_type: "llm_call",
+                    payload: {prompt: "Get data", response: "Data fetched"}, tokens_used: 100, cost_usd: 0.001
+                })
+            });
+
+            // Checkpoint
+            log('Saving safe checkpoint...', 'text-amber-400');
+            await fetch('/api/v1/checkpoints', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    agent_id: "test-agent-1", step_number: 1, state_snapshot: {"status": "safe"}
+                })
+            });
+
+                      // Step 2 - Anomaly
+            log('Executing Step 2: Processing (Simulating hallucination)...', 'text-gray-400');
+            setTimeout(async () => {
+                log('Agent encountered a fatal error. Context corrupted.', 'text-red-400');
+                log('Injecting error: Division by zero', 'text-red-500');
+                const res = await fetch('/api/v1/events', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        agent_id: "test-agent-1", step_number: 2, event_type: "llm_call",
+                        payload: {prompt: "Calculate", response: "Crash", error: "Division by zero"}, tokens_used: 50, cost_usd: 0.0005
+                    })
+                });
+                
+                const data = await res.json();
+                if(data.anomaly_detected) {
+                    setStatus('RECOVERING', 'bg-red-900 text-red-400', 'glow-red');
+                    log('🚨 ANOMALY DETECTED!', 'text-red-500 font-bold text-lg');
+                    log('🔄 Rolling back to last safe checkpoint...', 'text-amber-400');
+                    setTimeout(() => {
+                        log('✅ State restored. Agent survived.', 'text-green-400');
+                        setStatus('HEALED', 'bg-green-900 text-green-400', '');
+                        updateCost();
+                    }, 1500);
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
